@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Personagens - Rick and Morty</title>
+    <link rel="icon" type="image/ico" href="./icon.png"/>
+    <link rel="stylesheet" href="style.css" />
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <div class="app-container">
+      <header class="top-header">
+        <button id="btnMenuToggle" class="btn-menu">☰</button>
+        <div class="brand">
+          <span class="icon"><img src="./icon.png" alt=""></span>
+          <h1>Rick and Morty</h1>
+        </div>
+        <nav class="main-nav">
+          <a href="characters.html" class="active">Personagens</a>
+          <a href="episodios.html">Episódios</a>
+          <a href="localizacoes.html">Localizações</a>
+        </nav>
+        <div class="datetime-display" id="datetimeDisplay"></div>
+      </header>
+
+      <div id="sidebar" class="sidebar">
+        <h2>Filtros</h2>
+
+        <div class="filter-group">
+          <label>
+            Nome do Personagem
+            <input type="text" id="searchName" placeholder="Ex: Rick Sanchez" />
+          </label>
+        </div>
+
+        <div class="filter-group">
+          <label>
+            Status
+            <select id="filterStatus">
+              <option value="">Todos</option>
+              <option value="alive">Vivo</option>
+              <option value="dead">Morto</option>
+              <option value="unknown">Desconhecido</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="filter-group">
+          <label>
+            Espécie
+            <select id="filterSpecies">
+              <option value="">Todas</option>
+              <option value="human">Humano</option>
+              <option value="alien">Alien</option>
+              <option value="mythological creature">Criatura Mitológica</option>
+              <option value="unknown">Desconhecido</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="filter-group">
+          <label>
+            Genero
+            <select id="filterGender">
+              <option value="">Todos</option>
+              <option value="male">Masculino</option>
+              <option value="female">Feminino</option>
+              <option value="unknown">Desconhecido</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="filter-actions">
+          <button id="btnApplyFilters" class="btn-primary">Aplicar</button>
+          <button id="btnClearFilters" class="btn-secondary">Limpar</button>
+        </div>
+      </div>
+
+      <main class="main-content">
+        <div id="uiStateContainer" class="ui-state hidden"></div>
+
+        <div id="cardsContainer" class="cards-grid"></div>
+
+        <div id="paginationContainer" class="pagination hidden">
+          <button id="btnPrevPage" class="btn-secondary" disabled>
+            Anterior
+          </button>
+          <span class="page-info"
+            >Página <span id="currentPage">1</span> de
+            <span id="totalPages">1</span></span
+          >
+          <button id="btnNextPage" class="btn-secondary">Próxima</button>
+        </div>
+      </main>
+    </div>
+
+    <div id="characterModal" class="modal-overlay hidden">
+      <div class="modal-content">
+        <button id="btnCloseModal" class="btn-close">&times;</button>
+        <div id="modalBody" class="modal-body"></div>
+      </div>
+    </div>
+  </body>
+</html>
