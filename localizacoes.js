@@ -48,7 +48,7 @@ function setUIState(state, message = "") {
 async function fetchDimensions(loadingMessage = "Carregando dimensões...") {
   setUIState("loading", loadingMessage);
 
-  await delay(1500);
+  await delay(1000);
 
   const params = new URLSearchParams({
     page: appState.currentPage,
