@@ -2,28 +2,32 @@
 <html lang="pt-br">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Personagens - Rick and Morty</title>
-    <link rel="icon" type="image/ico" href="./icon.png"/>
+    <link rel="icon" type="image/ico" href="./icon.png" />
     <link rel="stylesheet" href="style.css" />
-    <script src="script.js" defer></script>
+    <script src="personagens.js" defer></script>
   </head>
   <body>
+
     <div class="app-container">
       <header class="top-header">
+        <!-- menu hamburguer -->
         <button id="btnMenuToggle" class="btn-menu">☰</button>
         <div class="brand">
-          <span class="icon"><img src="./icon.png" alt=""></span>
+          <!-- Logo e Imagem do Rick -->
+          <span class="icon"><img src="./icon.png" alt="" /></span>
           <h1>Rick and Morty</h1>
         </div>
         <nav class="main-nav">
-          <a href="characters.html" class="active">Personagens</a>
+          <!-- navegação -->
+          <a href="personagens.html" class="active">Personagens</a>
           <a href="episodios.html">Episódios</a>
           <a href="localizacoes.html">Localizações</a>
         </nav>
+        <!-- display do horario -->
         <div class="datetime-display" id="datetimeDisplay"></div>
-      </header>
+      </header> 
 
       <div id="sidebar" class="sidebar">
         <h2>Filtros</h2>
@@ -39,6 +43,7 @@
           <label>
             Status
             <select id="filterStatus">
+              <!-- valor que manda / valor traduzido -->
               <option value="">Todos</option>
               <option value="alive">Vivo</option>
               <option value="dead">Morto</option>
@@ -51,6 +56,7 @@
           <label>
             Espécie
             <select id="filterSpecies">
+              <!-- valor que manda / valor traduzido -->
               <option value="">Todas</option>
               <option value="human">Humano</option>
               <option value="alien">Alien</option>
@@ -64,6 +70,7 @@
           <label>
             Genero
             <select id="filterGender">
+              <!-- valor que manda / valor traduzido -->
               <option value="">Todos</option>
               <option value="male">Masculino</option>
               <option value="female">Feminino</option>
@@ -73,17 +80,21 @@
         </div>
 
         <div class="filter-actions">
+          <!-- id para configurar o btn no JS / class para estilizar -->
           <button id="btnApplyFilters" class="btn-primary">Aplicar</button>
           <button id="btnClearFilters" class="btn-secondary">Limpar</button>
         </div>
       </div>
 
       <main class="main-content">
+        <!-- estado de ui / aviso de carregamento ou erro -->
         <div id="uiStateContainer" class="ui-state hidden"></div>
 
+        <!-- grade de cards -->
         <div id="cardsContainer" class="cards-grid"></div>
 
         <div id="paginationContainer" class="pagination hidden">
+          <!-- paginação -->
           <button id="btnPrevPage" class="btn-secondary" disabled>
             Anterior
           </button>

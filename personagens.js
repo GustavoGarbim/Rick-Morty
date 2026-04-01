@@ -239,7 +239,7 @@ elements.btnApplyFilters.addEventListener("click", () => {
   appState.filters.gender = elements.filterGender.value;
   appState.currentPage = 1;
   closeSidebarOnMobile();
-  fetchCharacters("Aplicando filtros interdimensionais...");
+  fetchCharacters("Aplicando filtros...");
 });
 
 elements.btnClearFilters.addEventListener("click", () => {

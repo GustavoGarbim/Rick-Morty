@@ -1,56 +1,63 @@
-let currentPage = 1;
-let totalPages = 1;
-let currentFilters = { name: "", type: "", dimension: "" };
-let currentData = [];
+const appState = {
+  currentPage: 1,
+  totalPages: 1,
+  filters: {
+    name: "",
+    type: "",
+    dimension: "",
+  },
+  currentData: [],
+};
 
-const datetimeDisplay = document.getElementById("datetimeDisplay");
-const searchName = document.getElementById("searchName");
-const searchType = document.getElementById("searchType");
-const searchDimension = document.getElementById("searchDimension");
-const btnApplyFilters = document.getElementById("btnApplyFilters");
-const btnClearFilters = document.getElementById("btnClearFilters");
-const uiStateContainer = document.getElementById("uiStateContainer");
-const cardsContainer = document.getElementById("cardsContainer");
-const paginationContainer = document.getElementById("paginationContainer");
-const btnPrevPage = document.getElementById("btnPrevPage");
-const btnNextPage = document.getElementById("btnNextPage");
-const currentPageSpan = document.getElementById("currentPage");
-const totalPagesSpan = document.getElementById("totalPages");
-
-const btnMenuToggle = document.getElementById("btnMenuToggle");
-const sidebar = document.getElementById("sidebar");
+const elements = {
+  datetimeDisplay: document.getElementById("datetimeDisplay"),
+  searchName: document.getElementById("searchName"),
+  searchType: document.getElementById("searchType"),
+  searchDimension: document.getElementById("searchDimension"),
+  btnApplyFilters: document.getElementById("btnApplyFilters"),
+  btnClearFilters: document.getElementById("btnClearFilters"),
+  uiStateContainer: document.getElementById("uiStateContainer"),
+  cardsContainer: document.getElementById("cardsContainer"),
+  paginationContainer: document.getElementById("paginationContainer"),
+  btnPrevPage: document.getElementById("btnPrevPage"),
+  btnNextPage: document.getElementById("btnNextPage"),
+  currentPageSpan: document.getElementById("currentPage"),
+  totalPagesSpan: document.getElementById("totalPages"),
+  btnMenuToggle: document.getElementById("btnMenuToggle"),
+  sidebar: document.getElementById("sidebar")
+};
 
 function setUIState(state, message = "") {
-  uiStateContainer.className = "ui-state";
-  cardsContainer.innerHTML = "";
-  paginationContainer.classList.add("hidden");
+  elements.uiStateContainer.className = "ui-state";
+  elements.cardsContainer.innerHTML = "";
+  elements.paginationContainer.classList.add("hidden");
 
   if (state === "loading") {
-    uiStateContainer.innerHTML = `<p class="pulse-text">⏳ ${message || "Carregando..."}</p>`;
-    uiStateContainer.classList.remove("hidden");
+    elements.uiStateContainer.innerHTML = `<p class="pulse-text">⏳ ${message || "Carregando..."}</p>`;
+    elements.uiStateContainer.classList.remove("hidden");
   } else if (state === "error") {
-    uiStateContainer.classList.add("error");
-    uiStateContainer.innerHTML = `<p>⚠️ ${message}</p>`;
-    uiStateContainer.classList.remove("hidden");
+    elements.uiStateContainer.classList.add("error");
+    elements.uiStateContainer.innerHTML = `<p>⚠️ ${message}</p>`;
+    elements.uiStateContainer.classList.remove("hidden");
   } else if (state === "success") {
-    uiStateContainer.classList.add("hidden");
-    paginationContainer.classList.remove("hidden");
+    elements.uiStateContainer.classList.add("hidden");
+    elements.paginationContainer.classList.remove("hidden");
   }
 }
 
 async function fetchDimensions(loadingMessage = "Carregando dimensões...") {
   setUIState("loading", loadingMessage);
-  
+
   await delay(1500);
 
   const params = new URLSearchParams({
-    page: currentPage,
+    page: appState.currentPage,
   });
 
-  if (currentFilters.name) params.append("name", currentFilters.name);
-  if (currentFilters.type) params.append("type", currentFilters.type);
-  if (currentFilters.dimension)
-    params.append("dimension", currentFilters.dimension);
+  if (appState.filters.name) params.append("name", appState.filters.name);
+  if (appState.filters.type) params.append("type", appState.filters.type);
+  if (appState.filters.dimension)
+    params.append("dimension", appState.filters.dimension);
 
   try {
     const response = await fetch(
@@ -64,8 +71,8 @@ async function fetchDimensions(loadingMessage = "Carregando dimensões...") {
     const data = await response.json();
     console.log("Dimensões retornadas:", data);
 
-    currentData = data.results;
-    totalPages = data.info.pages;
+    appState.currentData = data.results;
+    appState.totalPages = data.info.pages;
 
     setUIState("success");
     renderCards(data.results);
@@ -73,12 +80,12 @@ async function fetchDimensions(loadingMessage = "Carregando dimensões...") {
   } catch (error) {
     console.error(error);
     setUIState("error", "Nenhuma dimensão encontrada com esses filtros.");
-    currentData = [];
+    appState.currentData = [];
   }
 }
 
 function renderCards(dimensions) {
-  cardsContainer.innerHTML = dimensions
+  elements.cardsContainer.innerHTML = dimensions
     .map((loc) => {
       return `
     <article class="card" style="padding: 20px;">
@@ -111,63 +118,63 @@ function updateDateTime() {
     minute: "2-digit",
     second: "2-digit",
   };
-  datetimeDisplay.textContent = now.toLocaleDateString("pt-BR", options);
+  elements.datetimeDisplay.textContent = now.toLocaleDateString("pt-BR", options);
 }
 
 setInterval(updateDateTime, 1000);
 updateDateTime();
 
 function updatePaginationUI() {
-  currentPageSpan.textContent = currentPage;
-  totalPagesSpan.textContent = totalPages;
+  elements.currentPageSpan.textContent = appState.currentPage;
+  elements.totalPagesSpan.textContent = appState.totalPages;
 
-  btnPrevPage.disabled = currentPage === 1;
-  btnNextPage.disabled = currentPage === totalPages;
+  elements.btnPrevPage.disabled = appState.currentPage === 1;
+  elements.btnNextPage.disabled = appState.currentPage === appState.totalPages;
 }
 
 function closeSidebarOnMobile() {
   if (window.innerWidth <= 768) {
-    sidebar.classList.remove("active");
+    elements.sidebar.classList.remove("active");
   }
 }
 
-btnMenuToggle.addEventListener("click", () => {
-  sidebar.classList.toggle("active");
+elements.btnMenuToggle.addEventListener("click", () => {
+  elements.sidebar.classList.toggle("active");
 });
 
-
-btnApplyFilters.addEventListener("click", () => {
-  currentFilters.name = searchName.value.trim();
-  currentFilters.type = searchType.value.trim();
-  currentFilters.dimension = searchDimension.value.trim();
-  currentPage = 1;
+elements.btnApplyFilters.addEventListener("click", () => {
+  appState.filters.name = elements.searchName.value.trim();
+  appState.filters.type = elements.searchType.value.trim();
+  appState.filters.dimension = elements.searchDimension.value.trim();
+  appState.currentPage = 1;
   closeSidebarOnMobile();
   fetchDimensions("Aplicando filtros...");
 });
 
-btnClearFilters.addEventListener("click", () => {
-  searchName.value = "";
-  searchType.value = "";
-  searchDimension.value = "";
-  currentFilters.name = "";
-  currentFilters.type = "";
-  currentFilters.dimension = "";
-  currentPage = 1;
+elements.btnClearFilters.addEventListener("click", () => {
+  elements.searchName.value = "";
+  elements.searchType.value = "";
+  elements.searchDimension.value = "";
+
+  appState.filters.name = "";
+  appState.filters.type = "";
+  appState.filters.dimension = "";
+  appState.currentPage = 1;
   closeSidebarOnMobile();
-  fetchDimensions("Limpando...");
+  fetchDimensions("Limpando filtros...");
 });
 
-btnPrevPage.addEventListener("click", () => {
-  if (currentPage > 1) {
-    currentPage--;
-    fetchDimensions();
+elements.btnPrevPage.addEventListener("click", () => {
+  if (appState.currentPage > 1) {
+    appState.currentPage--;
+    fetchDimensions("Viajando para a página anterior...");
   }
 });
 
-btnNextPage.addEventListener("click", () => {
-  if (currentPage < totalPages) {
-    currentPage++;
-    fetchDimensions();
+elements.btnNextPage.addEventListener("click", () => {
+  if (appState.currentPage < appState.totalPages) {
+    appState.currentPage++;
+    fetchDimensions("Buscando mais localizações...");
   }
 });
 
