@@ -32,27 +32,27 @@ const elements = {
   sidebar: document.getElementById("sidebar"),
 };
 
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+// const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-function updateDateTime() {
-  const now = new Date();
-  const options = {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  };
-  elements.datetimeDisplay.textContent = now.toLocaleDateString(
-    "pt-BR",
-    options,
-  );
-}
+// function updateDateTime() {
+//   const now = new Date();
+//   const options = {
+//     weekday: "long",
+//     year: "numeric",
+//     month: "long",
+//     day: "numeric",
+//     hour: "2-digit",
+//     minute: "2-digit",
+//     second: "2-digit",
+//   };
+//   elements.datetimeDisplay.textContent = now.toLocaleDateString(
+//     "pt-BR",
+//     options,
+//   );
+// }
 
-setInterval(updateDateTime, 1000);
-updateDateTime();
+// setInterval(updateDateTime, 1000);
+// updateDateTime();
 
 function setUIState(state, message = "") {
   elements.uiStateContainer.className = "ui-state";
@@ -75,7 +75,7 @@ function setUIState(state, message = "") {
 async function fetchCharacters(loadingMessage = "Carregando informações...") {
   setUIState("loading", loadingMessage);
 
-  await delay(1500);
+  await delay(800);
 
   const params = new URLSearchParams({
     page: appState.currentPage,
@@ -121,6 +121,10 @@ function renderCards(characters) {
   elements.cardsContainer.innerHTML = characters
     .map((char) => {
       const statusClass = char.status.toLowerCase();
+      const origin =
+        char.origin.name === "unknown"
+          ? "Origem Desconhecida"
+          : char.origin.name;
       const specieText =
         char.species === "Human"
           ? "Humano"
@@ -156,7 +160,7 @@ function renderCards(characters) {
                 <div class="card-info">
                     <h3>${char.name}</h3>
                     <p>${specieText} - ${genderText}</p>
-                    <p>${char.origin.name}</p>
+                    <p>${origin}</p>
                 </div>
             </article>
         `;
@@ -175,7 +179,26 @@ function updatePaginationUI() {
 function openModal(characterId) {
   const character = appState.currentData.find((c) => c.id === characterId);
   if (!character) return;
-
+  const origin =
+    character.origin.name === "unknown"
+      ? "Desconhecida"
+      : character.origin.name;
+  const specieText =
+    character.species === "Human"
+      ? "Humano"
+      : character.species === "Robot"
+        ? "Robô"
+        : character.species === "Humanoid"
+          ? "Humanoide"
+          : character.species === "Mythological Creature"
+            ? "Criatura mitológica"
+            : character.species;
+  const genderText =
+    character.gender === "Male"
+      ? "Masculino"
+      : character.gender === "Female"
+        ? "Feminino"
+        : "Desconhecido";
   const statusText =
     character.status === "Alive"
       ? "Vivo"
@@ -195,12 +218,12 @@ function openModal(characterId) {
             
             <div class="detail-row">
                 <span class="detail-label">Espécie / Gênero</span>
-                <span class="detail-value">${character.species} / ${character.gender}</span>
+                <span class="detail-value">${specieText} / ${genderText}</span>
             </div>
             
             <div class="detail-row">
                 <span class="detail-label">Origem</span>
-                <span class="detail-value">${character.origin.name}</span>
+                <span class="detail-value">${origin}</span>
             </div>
             
             <div class="detail-row">
@@ -221,16 +244,6 @@ function openModal(characterId) {
 function closeModal() {
   elements.modalOverlay.classList.add("hidden");
 }
-
-function closeSidebarOnMobile() {
-  if (window.innerWidth <= 768) {
-    elements.sidebar.classList.remove("active");
-  }
-}
-
-elements.btnMenuToggle.addEventListener("click", () => {
-  elements.sidebar.classList.toggle("active");
-});
 
 elements.btnApplyFilters.addEventListener("click", () => {
   appState.filters.name = elements.searchName.value.trim();

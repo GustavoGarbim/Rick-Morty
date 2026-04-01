@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal do Rick</title>
+    <link rel="icon" type="image/ico" href="./assets/icon.png" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #050505;
+            color: #00ff41;
+            font-family: 'VT323', monospace;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .crt-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .terminal {
+            width: 80%;
+            max-width: 800px;
+            font-size: 1.5rem;
+            line-height: 1.6;
+            text-shadow: 0 0 5px #00ff41;
+        }
+
+        .line {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 1.2rem;
+            background-color: #00ff41;
+            animation: blink 1s step-end infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .btn-access {
+            margin-top: 30px;
+            background: transparent;
+            color: #00ff41;
+            border: 2px solid #00ff41;
+            padding: 15px 30px;
+            font-family: 'VT323', monospace;
+            font-size: 1.8rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            text-shadow: 0 0 5px #00ff41;
+            box-shadow: 0 0 10px rgba(0, 255, 65, 0.2) inset, 0 0 10px rgba(0, 255, 65, 0.2);
+            transition: all 0.3s ease;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .btn-access.visible {
+            opacity: 1;
+            pointer-events: auto;
+            animation: pulseBtn 2s infinite;
+        }
+
+        .btn-access:hover {
+            background: #00ff41;
+            color: #050505;
+        }
+
+        @keyframes pulseBtn {
+            0% { box-shadow: 0 0 10px rgba(0, 255, 65, 0.2) inset, 0 0 10px rgba(0, 255, 65, 0.2); }
+            50% { box-shadow: 0 0 20px rgba(0, 255, 65, 0.5) inset, 0 0 20px rgba(0, 255, 65, 0.5); }
+            100% { box-shadow: 0 0 10px rgba(0, 255, 65, 0.2) inset, 0 0 10px rgba(0, 255, 65, 0.2); }
+        }
+
+        /* === EFEITO DO PORTAL === */
+        .portal-overlay {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 100px;
+            height: 100px;
+            /* Um gradiente em espiral com vários tons de verde neon */
+            background: conic-gradient(from 0deg, #53d043, #226f1c, #97ce4c, #16480d, #53d043);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            pointer-events: none;
+            z-index: 9999;
+            /* Brilho verde em volta do portal */
+            box-shadow: 0 0 80px 40px #53d043, inset 0 0 40px #97ce4c;
+            opacity: 0;
+            filter: blur(4px); /* Deixa a borda meio borrada/misteriosa */
+        }
+
+        .portal-overlay.expand {
+            /* Quando a classe for ativada pelo JS, ele cresce girando por 2 segundos */
+            animation: openPortal 2s ease-in forwards;
+        }
+
+        @keyframes openPortal {
+            0% { 
+                transform: translate(-50%, -50%) scale(0) rotate(0deg); 
+                opacity: 0; 
+            }
+            10% { 
+                opacity: 1; /* Aparece rápido */
+            }
+            100% { 
+                /* Gira 3 vezes (1080 graus) e cresce 40 vezes o tamanho original (engolindo a tela) */
+                transform: translate(-50%, -50%) scale(40) rotate(1080deg); 
+                opacity: 1; 
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="crt-overlay"></div>
+    
+    <audio id="rickAudio" src="assets/rick-fala.mp3"></audio>
+    <div id="portalEffect" class="portal-overlay"></div>
+    
+    <div class="terminal" id="terminal"></div>
+    
+    <button id="btnAccess" class="btn-access">[ ACESSAR ARQUIVOS ]</button>
+
+    <script>
+        const terminal = document.getElementById('terminal');
+        const btnAccess = document.getElementById('btnAccess');
+        const audioRick = document.getElementById('rickAudio');
+        
+        const lines = [
+            "> Inicializando banco de dados da Cidadela dos Ricks...",
+            "> Estabelecendo conexao interdimensional...",
+            "> Bypass de seguranca... Concluido.",
+            "> Descriptografando registros... Falha.",
+            "> Ignorando protocolo de seguranca...",
+            "> Morty, aperta logo o botao de entrar, Morty! Nao temos o dia todo! *burp*"
+        ];
+
+        let currentLine = 0;
+        let currentChar = 0;
+
+        function typeWriter() {
+            if (currentLine < lines.length) {
+                if (currentChar === 0) {
+                    const lineDiv = document.createElement('div');
+                    lineDiv.className = 'line';
+                    lineDiv.id = 'line-' + currentLine;
+                    terminal.appendChild(lineDiv);
+                }
+
+                const currentDiv = document.getElementById('line-' + currentLine);
+                
+                if (currentChar < lines[currentLine].length) {
+                    currentDiv.textContent += lines[currentLine].charAt(currentChar);
+                    currentChar++;
+                    
+                    let speed = Math.random() * 50 + 20;
+                    setTimeout(typeWriter, speed);
+                } else {
+                    currentChar = 0;
+                    currentLine++;
+                    setTimeout(typeWriter, 500);
+                }
+            } else {
+                const cursor = document.createElement('span');
+                cursor.className = 'cursor';
+                terminal.appendChild(cursor);
+                
+                setTimeout(() => {
+                    btnAccess.classList.add('visible');
+                }, 800);
+            }
+        }
+
+        const portalEffect = document.getElementById('portalEffect');
+
+        // Lógica do clique do botão com áudio
+        btnAccess.addEventListener('click', () => {
+            // 1. Toca o MP3
+            audioRick.play();
+            
+            // 2. Dispara a animação do portal CSS
+            portalEffect.classList.add('expand');
+            
+            // 3. Muda o visual do botão
+            btnAccess.textContent = "[ ABRINDO PORTAL... ]";
+            btnAccess.style.background = "#00ff41";
+            btnAccess.style.color = "#050505";
+            btnAccess.style.animation = "none";
+            
+            // 4. Aguarda 2 segundos (tempo do portal crescer e do áudio tocar) e muda de tela
+            setTimeout(() => {
+                window.location.href = 'personagens.html';
+            }, 1200); 
+        });
+
+        // Inicia a animação de texto após 1 segundo
+        setTimeout(typeWriter, 1000);
+    </script>
+</body>
+</html>
