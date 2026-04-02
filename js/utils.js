@@ -27,7 +27,6 @@ function setupSidebar() {
 }
 
 setupSidebar();
-
 function closeSidebarOnMobile() {
   const sidebar = document.getElementById("sidebar");
   if (sidebar && window.innerWidth <= 768) {

@@ -1,3 +1,4 @@
+// Estado do APP.
 const appState = {
   currentPage: 1,
   totalPages: 1,
@@ -10,6 +11,7 @@ const appState = {
   currentData: [],
 };
 
+// Elementos HTML.
 const elements = {
   datetimeDisplay: document.getElementById("datetimeDisplay"),
   searchName: document.getElementById("searchName"),
@@ -32,28 +34,7 @@ const elements = {
   sidebar: document.getElementById("sidebar"),
 };
 
-// const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-// function updateDateTime() {
-//   const now = new Date();
-//   const options = {
-//     weekday: "long",
-//     year: "numeric",
-//     month: "long",
-//     day: "numeric",
-//     hour: "2-digit",
-//     minute: "2-digit",
-//     second: "2-digit",
-//   };
-//   elements.datetimeDisplay.textContent = now.toLocaleDateString(
-//     "pt-BR",
-//     options,
-//   );
-// }
-
-// setInterval(updateDateTime, 1000);
-// updateDateTime();
-
+// Estado de UI.
 function setUIState(state, message = "") {
   elements.uiStateContainer.className = "ui-state";
   elements.cardsContainer.innerHTML = "";
@@ -67,16 +48,19 @@ function setUIState(state, message = "") {
     elements.uiStateContainer.innerHTML = `<p>⚠️ ${message}</p>`;
     elements.uiStateContainer.classList.remove("hidden");
   } else if (state === "success") {
+    // Se tudo der certo, ele esconde a mensagem.
     elements.uiStateContainer.classList.add("hidden");
     elements.paginationContainer.classList.remove("hidden");
   }
 }
 
+// função de buscar os personagens.
 async function fetchCharacters(loadingMessage = "Carregando informações...") {
   setUIState("loading", loadingMessage);
 
   await delay(800);
 
+  // montagem dos parametros dos filtros da URL.
   const params = new URLSearchParams({
     page: appState.currentPage,
   });
@@ -121,6 +105,7 @@ function renderCards(characters) {
   elements.cardsContainer.innerHTML = characters
     .map((char) => {
       const statusClass = char.status.toLowerCase();
+      // Tradução das caracteristicas do personagem.
       const origin =
         char.origin.name === "unknown"
           ? "Origem Desconhecida"
@@ -245,6 +230,7 @@ function closeModal() {
   elements.modalOverlay.classList.add("hidden");
 }
 
+// Botão de aplicar filtros.
 elements.btnApplyFilters.addEventListener("click", () => {
   appState.filters.name = elements.searchName.value.trim();
   appState.filters.status = elements.filterStatus.value;
@@ -255,6 +241,7 @@ elements.btnApplyFilters.addEventListener("click", () => {
   fetchCharacters("Aplicando filtros...");
 });
 
+// Botão de limpar filtros.
 elements.btnClearFilters.addEventListener("click", () => {
   elements.searchName.value = "";
   elements.filterStatus.value = "";
@@ -270,6 +257,7 @@ elements.btnClearFilters.addEventListener("click", () => {
   fetchCharacters("Limpando filtros...");
 });
 
+// Voltar 1 página.
 elements.btnPrevPage.addEventListener("click", () => {
   if (appState.currentPage > 1) {
     appState.currentPage--;
@@ -277,6 +265,7 @@ elements.btnPrevPage.addEventListener("click", () => {
   }
 });
 
+// Avançar 1 página.
 elements.btnNextPage.addEventListener("click", () => {
   if (appState.currentPage < appState.totalPages) {
     appState.currentPage++;
@@ -284,14 +273,17 @@ elements.btnNextPage.addEventListener("click", () => {
   }
 });
 
+// fechar modal no botão.
 elements.btnCloseModal.addEventListener("click", closeModal);
 
+// fechar modal quando clicar fora dele.
 elements.modalOverlay.addEventListener("click", (event) => {
   if (event.target === elements.modalOverlay) {
     closeModal();
   }
 });
 
+// fechar modal quando apertar no ESC.
 document.addEventListener("keydown", (event) => {
   if (
     event.key === "Escape" &&
