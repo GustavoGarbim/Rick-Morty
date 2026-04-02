@@ -498,3 +498,21 @@ body {
     opacity: 0.5;
   }
 }
+
+
+
+/* ========================================= */
+/* EASTER EGG: PICKLE RICK CURSOR            */
+/* ========================================= */
+
+.pickle-mode {
+  cursor: url('../assets/pickle-rick.png'), auto !important;
+}
+
+.pickle-mode a,
+.pickle-mode button,
+.pickle-mode .card,
+.pickle-mode input,
+.pickle-mode select {
+  cursor: url('../assets/pickle-rick2.png'), pointer !important;
+}

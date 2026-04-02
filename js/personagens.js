@@ -294,3 +294,49 @@ document.addEventListener("keydown", (event) => {
 });
 
 fetchCharacters("Abrindo portal espacial...");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ==========================================
+// EASTER EGG: Pickle Rick
+// ==========================================
+const secretWord = "pickle";
+let typedKeys = "";
+
+window.addEventListener("keydown", (event) => {
+  if (event.key.length !== 1) return;
+
+  const letter = event.key.toLowerCase();
+
+  typedKeys += letter;
+
+  if (typedKeys.length > secretWord.length) {
+    typedKeys = typedKeys.slice(-secretWord.length);
+  }
+
+  if (typedKeys === secretWord) {
+    document.body.classList.toggle("pickle-mode");
+    
+    typedKeys = "";
+    console.log("I'M PICKLE RIIIIIICK!");
+  }
+});
