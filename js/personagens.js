@@ -101,6 +101,7 @@ async function fetchCharacters(loadingMessage = "Carregando informações...") {
   }
 }
 
+// Renderizar cards dos personagens.
 function renderCards(characters) {
   elements.cardsContainer.innerHTML = characters
     .map((char) => {
@@ -153,6 +154,7 @@ function renderCards(characters) {
     .join("");
 }
 
+// UI botão da paginação.
 function updatePaginationUI() {
   elements.currentPageSpan.textContent = appState.currentPage;
   elements.totalPagesSpan.textContent = appState.totalPages;
@@ -161,6 +163,7 @@ function updatePaginationUI() {
   elements.btnNextPage.disabled = appState.currentPage === appState.totalPages;
 }
 
+// Abrir modal do personagem.
 function openModal(characterId) {
   const character = appState.currentData.find((c) => c.id === characterId);
   if (!character) return;
@@ -226,6 +229,7 @@ function openModal(characterId) {
   elements.modalOverlay.classList.remove("hidden");
 }
 
+// fechar modal do personagem.
 function closeModal() {
   elements.modalOverlay.classList.add("hidden");
 }

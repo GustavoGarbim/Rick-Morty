@@ -1,5 +1,7 @@
+// delay proposital.
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+// função de atualizar a data.
 function updateDateTime() {
   const datetimeDisplay = document.getElementById("datetimeDisplay");
   if (!datetimeDisplay) return;
@@ -12,9 +14,11 @@ function updateDateTime() {
   datetimeDisplay.textContent = now.toLocaleDateString("pt-BR", options);
 }
 
+// atualizar a cada 1 segundo.
 setInterval(updateDateTime, 1000);
 updateDateTime();
 
+// sidebar para mobile.
 function setupSidebar() {
   const btnMenuToggle = document.getElementById("btnMenuToggle");
   const sidebar = document.getElementById("sidebar");
@@ -26,7 +30,8 @@ function setupSidebar() {
   }
 }
 
-setupSidebar();
+setpSidebar();
+
 function closeSidebarOnMobile() {
   const sidebar = document.getElementById("sidebar");
   if (sidebar && window.innerWidth <= 768) {
